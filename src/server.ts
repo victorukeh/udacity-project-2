@@ -36,18 +36,20 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 		if (!image)
 			return res.status(400).send({ message: "Image URL is required" });
 		try {
-			var file: string = await filterImageFromURL(image);
+			var file: string = await filterImageFromURL(image.toString());
 		} catch (err) {
 			return res.status(422).send({ message: "Could not process request" });
 		}
-		res.sendFile(file, (err) => {
+		await res.sendFile(file, (err: Error) => {
 			if (err) {
 				console.error(err);
-        return res
-        .status(500)
-        .send("The image is not accessible. Please check the URL and try again.")
+				return res
+					.status(500)
+					.send(
+						"The image is not accessible. Please check the URL and try again."
+					);
 			}
- 
+
 			deleteLocalFiles([file]);
 		});
 	});
